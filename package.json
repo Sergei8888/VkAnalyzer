@@ -1,0 +1,54 @@
+{
+    "name": "asuno",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "engines": {
+        "node": ">=18.16.1",
+        "pnpm": ">=8.9.2"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc && vite build",
+        "preview": "vite preview",
+        "lint": "pnpm run lint:js && pnpm run lint:css",
+        "lint:js": "eslint \"./**/*.{js,ts,vue}\" --max-warnings 10 --fix",
+        "lint:css": "stylelint **/*.{css,scss,vue} -c=.stylelintrc.json --fix",
+        "check-types": "vue-tsc --noEmit",
+        "bundle": "vite-bundle-visualizer",
+        "build:container": "docker build . -t=vk-analyzer_frontend"
+    },
+    "dependencies": {
+        "axios": "^1.5.1",
+        "normalize.css": "^8.0.1",
+        "pinia": "^2.1.7",
+        "sass": "1.69.4",
+        "unplugin-fonts": "^1.0.3",
+        "vite-svg-loader": "^4.0.0",
+        "vue": "^3.3.4",
+        "vue-router": "^4.2.5"
+    },
+    "devDependencies": {
+        "@types/node": "^20.8.7",
+        "@typescript-eslint/eslint-plugin": "^6.8.0",
+        "@typescript-eslint/parser": "^6.8.0",
+        "@vitejs/plugin-vue": "^4.4.0",
+        "eslint": "^8.51.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-import-resolver-alias": "^1.1.2",
+        "eslint-import-resolver-typescript": "^3.6.1",
+        "eslint-plugin-import": "^2.28.1",
+        "eslint-plugin-prettier": "^5.0.1",
+        "eslint-plugin-vue": "^9.17.0",
+        "eslint-plugin-vue-scoped-css": "^2.5.1",
+        "prettier": "^3.0.3",
+        "stylelint": "^15.11.0",
+        "stylelint-config-idiomatic-order": "^9.0.0",
+        "stylelint-config-recommended-scss": "^13.0.0",
+        "stylelint-config-recommended-vue": "^1.5.0",
+        "typescript": "^5.2.2",
+        "vite": "^4.5.0",
+        "vite-bundle-visualizer": "^0.10.0",
+        "vue-tsc": "^1.8.19"
+    }
+}
