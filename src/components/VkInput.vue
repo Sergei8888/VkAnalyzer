@@ -58,4 +58,10 @@ function searchUsers(
     />
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.vk-input {
+    width: 700px;
+    height: 50px;
+    border-radius: 5px;
+}
+</style>

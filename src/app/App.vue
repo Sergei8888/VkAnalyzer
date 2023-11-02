@@ -8,7 +8,8 @@ VK.init({
 });
 
 VK.Auth.getLoginStatus((response) => {
-    if (!response.session) {
+    let notLoggedIn = !response.session;
+    if (notLoggedIn) {
         VkLogin();
     }
 });
@@ -29,6 +30,7 @@ provide(vkInjectionKey, VK);
 </template>
 
 <style lang="scss">
+@import 'scss/design-tokens.scss';
 @import 'normalize.css';
 @import 'scss/global';
 </style>
