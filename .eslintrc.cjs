@@ -6,6 +6,11 @@ module.exports = {
         node: true,
     },
 
+    // VK OpenApi
+    globals: {
+        "VK": "writable",
+    },
+
     plugins: ['prettier', '@typescript-eslint/eslint-plugin', 'import'],
 
     parser: 'vue-eslint-parser',

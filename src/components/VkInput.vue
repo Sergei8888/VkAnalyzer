@@ -1,5 +1,7 @@
 <script setup lang="ts"></script>
 
-<template></template>
+<template>
+    <input />
+</template>
 
 <style scoped lang="scss"></style>

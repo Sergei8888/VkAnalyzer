@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import VkInput from '@/components/VkInput.vue';
+</script>
 
-<template></template>
+<template>
+    <VkInput />
+</template>
 
 <style scoped lang="scss"></style>
