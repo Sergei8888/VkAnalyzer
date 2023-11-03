@@ -10,7 +10,12 @@ defineProps<{
 
 <template>
     <div class="user-card">
-        <img class="user-card__avatar" :src="photo" alt="avatar" />
+        <img
+            class="user-card__avatar"
+            :src="photo"
+            alt="avatar"
+            loading="lazy"
+        />
         <div class="user-card__info">
             <span class="user-card__name">{{ firstName }} {{ lastName }}</span>
             <span class="user-card__screen-name">{{ screenName }}</span>
