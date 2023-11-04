@@ -1,5 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
 
-<template></template>
+const route = useRoute();
+</script>
+
+<template>
+    <p>{{ route.query.friendId }}</p>
+</template>
 
 <style scoped lang="scss"></style>

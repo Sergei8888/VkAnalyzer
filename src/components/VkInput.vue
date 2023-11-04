@@ -12,8 +12,17 @@ const emit = defineEmits<{
 const suggestionQueue = userSuggestionQueue(emit);
 const triggerSuggestion = throttle((e: Event) => {
     let query = (e.target as HTMLInputElement).value;
+    suggestionQueue.isActive.value = true;
     suggestionQueue.addRequest(query);
 }, 1000);
+
+function disableSuggestions() {
+    suggestionQueue.isActive.value = false;
+    // Delay to click on suggestion after input focus losing
+    setTimeout(() => {
+        emit('suggestion', []);
+    }, 100);
+}
 </script>
 
 <template>
@@ -22,7 +31,8 @@ const triggerSuggestion = throttle((e: Event) => {
             class="vk-input__input"
             type="text"
             placeholder="Введие id, имя/фамилию или короткое имя пользователя"
-            @focus="triggerSuggestion"
+            @focusin="triggerSuggestion"
+            @focusout="disableSuggestions"
             @input="triggerSuggestion"
         />
         <div v-if="suggestionQueue.isLoading.value" class="vk-input__spinner">

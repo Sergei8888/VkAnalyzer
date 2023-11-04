@@ -19,6 +19,7 @@ export function useVkApi() {
             // Profile is private
             if (response.error.error_code === 30) {
                 alert('Нельзая получить доступ к приватному профилю');
+                return response;
             }
             throw response;
         }

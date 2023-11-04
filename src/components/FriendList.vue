@@ -14,15 +14,21 @@ defineProps<{
             :key="friend.id"
             class="friend-list__item"
         >
-            <FriendCard
-                :id="friend.id"
-                :first-name="friend.firstName"
-                :last-name="friend.lastName"
-                :sex="friend.sex"
-                :count="friend.count"
-                :photo="friend.avatar"
-                :age="friend.age ?? 'Не указано'"
-            />
+            <router-link
+                :to="{ name: 'friend', query: { friendId: friend.id } }"
+                class="friend-list__link"
+            >
+                <FriendCard
+                    :id="friend.id"
+                    class="friend-list__card"
+                    :first-name="friend.firstName"
+                    :last-name="friend.lastName"
+                    :sex="friend.sex"
+                    :count="friend.count"
+                    :photo="friend.avatar"
+                    :age="friend.age ?? 'Не указано'"
+                />
+            </router-link>
         </li>
     </ul>
 </template>
@@ -38,5 +44,10 @@ defineProps<{
     grid-auto-rows: min-content;
     grid-template-columns: repeat(2, 1fr);
     list-style: none;
+
+    &__link {
+        color: inherit;
+        text-decoration: inherit;
+    }
 }
 </style>

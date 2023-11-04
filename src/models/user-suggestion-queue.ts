@@ -7,6 +7,7 @@ import { UserI } from '@/models/user.ts';
 export function userSuggestionQueue(
     suggestionEmit: (e: 'suggestion', value: UserI[]) => void
 ) {
+    const isActive = ref(false);
     const isLoading = ref(false);
     let suggestionRequestQueue: Promise<UserI[]>[] = [];
 
@@ -16,6 +17,10 @@ export function userSuggestionQueue(
         isLoading.value = true;
 
         userSuggestionRequest.then((result) => {
+            if (!isActive.value) {
+                return;
+            }
+
             // If request was least in queue, emit suggestions and clear queue
             if (suggestionRequestQueue.at(-1) === userSuggestionRequest) {
                 suggestionEmit('suggestion', result);
@@ -46,5 +51,5 @@ export function userSuggestionQueue(
         return userSuggestionsRequest;
     }
 
-    return { addRequest, isLoading };
+    return { addRequest, isLoading, isActive };
 }
