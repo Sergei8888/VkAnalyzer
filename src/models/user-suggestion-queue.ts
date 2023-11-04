@@ -4,23 +4,20 @@ import { useVkApi } from '@/shared/vk-api.ts';
 import { UserI } from '@/models/user.ts';
 
 // Add suggestion request to queue with addRequest method, and then it will emit 'suggestion' event with suggestions
-export function userSuggestionQueue(
+export function useUserSuggestionQueue(
     suggestionEmit: (e: 'suggestion', value: UserI[]) => void
 ) {
-    const isActive = ref(false);
     const isLoading = ref(false);
     let suggestionRequestQueue: Promise<UserI[]>[] = [];
 
     function addRequest(query: string) {
+        // Loading user suggestions
         const userSuggestionRequest = getUserSuggestionRequest(query);
         suggestionRequestQueue.push(userSuggestionRequest);
         isLoading.value = true;
 
+        // Emit the most actual suggestion (last) or skip non-actual suggestion request
         userSuggestionRequest.then((result) => {
-            if (!isActive.value) {
-                return;
-            }
-
             // If request was least in queue, emit suggestions and clear queue
             if (suggestionRequestQueue.at(-1) === userSuggestionRequest) {
                 suggestionEmit('suggestion', result);
@@ -51,5 +48,5 @@ export function userSuggestionQueue(
         return userSuggestionsRequest;
     }
 
-    return { addRequest, isLoading, isActive };
+    return { addRequest, isLoading };
 }

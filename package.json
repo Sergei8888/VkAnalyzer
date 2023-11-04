@@ -19,6 +19,7 @@
         "build:container": "docker build . -t=vk-analyzer_frontend"
     },
     "dependencies": {
+        "@vueuse/core": "^10.5.0",
         "axios": "^1.5.1",
         "lodash-es": "^4.17.21",
         "normalize.css": "^8.0.1",
