@@ -1,24 +1,19 @@
 <script setup lang="ts">
 import throttle from 'lodash-es/throttle';
-import { inject } from 'vue';
 
-import { vkInjectionKey } from '@/shared/injection-keys.ts';
-import { VkUser } from '@/shared/vk-api';
 import { userSuggestionQueue } from '@/models/user-suggestion-queue.ts';
 import SpinnerSvg from '@/assets/spinner.svg';
+import { UserI } from '@/models/user.ts';
 
 const emit = defineEmits<{
-    (e: 'suggestion', value: VkUser[]): void;
+    (e: 'suggestion', users: UserI[]): void;
 }>();
 
-const vk = inject(vkInjectionKey);
-if (!vk) throw new Error('vk is not provided');
-
-const suggestionQueue = userSuggestionQueue(vk, emit);
-const handleInputChange = throttle(
-    (value: string) => suggestionQueue.addRequest(value),
-    1000
-);
+const suggestionQueue = userSuggestionQueue(emit);
+const triggerSuggestion = throttle((e: Event) => {
+    let query = (e.target as HTMLInputElement).value;
+    suggestionQueue.addRequest(query);
+}, 1000);
 </script>
 
 <template>
@@ -27,9 +22,8 @@ const handleInputChange = throttle(
             class="vk-input__input"
             type="text"
             placeholder="Введие id, имя/фамилию или короткое имя пользователя"
-            @input="
-                (e) => handleInputChange((e.target as HTMLInputElement).value)
-            "
+            @focus="triggerSuggestion"
+            @input="triggerSuggestion"
         />
         <div v-if="suggestionQueue.isLoading.value" class="vk-input__spinner">
             <SpinnerSvg />

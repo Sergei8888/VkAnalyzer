@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-import { provide } from 'vue';
-
-import { vkInjectionKey } from '@/shared/injection-keys.ts';
-
 VK.init({
     apiId: Number(import.meta.env.VITE_VK_APP_ID),
 });
@@ -21,8 +17,6 @@ function VkLogin() {
         }
     }, 2);
 }
-
-provide(vkInjectionKey, VK);
 </script>
 
 <template>
@@ -30,7 +24,7 @@ provide(vkInjectionKey, VK);
 </template>
 
 <style lang="scss">
-@import 'scss/design-tokens.scss';
+@import 'scss/design-tokens';
 @import 'normalize.css';
 @import 'scss/global';
 </style>

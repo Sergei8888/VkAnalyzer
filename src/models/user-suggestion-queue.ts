@@ -1,17 +1,17 @@
 import { ref } from 'vue';
 
-import { useVkApi, VkUser } from '@/shared/vk-api.ts';
+import { useVkApi } from '@/shared/vk-api.ts';
+import { UserI } from '@/models/user.ts';
 
 // Add suggestion request to queue with addRequest method, and then it will emit 'suggestion' event with suggestions
 export function userSuggestionQueue(
-    vk: typeof VK,
-    suggestionEmit: (e: 'suggestion', value: VkUser[]) => void
+    suggestionEmit: (e: 'suggestion', value: UserI[]) => void
 ) {
     const isLoading = ref(false);
-    let suggestionRequestQueue: Promise<VkUser[]>[] = [];
+    let suggestionRequestQueue: Promise<UserI[]>[] = [];
 
     function addRequest(query: string) {
-        const userSuggestionRequest = getUserSuggestionRequest(query, vk);
+        const userSuggestionRequest = getUserSuggestionRequest(query);
         suggestionRequestQueue.push(userSuggestionRequest);
         isLoading.value = true;
 
@@ -32,15 +32,15 @@ export function userSuggestionQueue(
         });
     }
 
-    function getUserSuggestionRequest(query: string, vk: typeof VK) {
-        let userSuggestionsRequest: Promise<VkUser[]>;
+    function getUserSuggestionRequest(query: string) {
+        let userSuggestionsRequest: Promise<UserI[]>;
 
         if (!query) {
             userSuggestionsRequest = new Promise((resolve) => {
                 resolve([]);
             });
         } else {
-            userSuggestionsRequest = useVkApi(vk).searchUsers(query);
+            userSuggestionsRequest = useVkApi().searchUsers(query);
         }
 
         return userSuggestionsRequest;

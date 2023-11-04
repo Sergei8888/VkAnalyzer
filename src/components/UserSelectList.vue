@@ -1,22 +1,30 @@
 <script setup lang="ts">
-import { VkUser } from '@/shared/vk-api';
 import UserCard from '@/components/UserCard.vue';
+import { UserI } from '@/models/user.ts';
 
 defineProps<{
-    users: VkUser[];
+    users: UserI[];
+}>();
+
+defineEmits<{
+    (e: 'user-selected', user: UserI): void;
 }>();
 </script>
 
 <template>
-    <ul class="user-list">
+    <ul v-if="users.length" class="user-list">
         <li v-for="user in users" :key="user.id" class="user-list__item">
-            <button class="user-list__button">
+            <button
+                class="user-list__button"
+                @click="$emit('user-selected', user)"
+            >
                 <UserCard
                     :id="user.id"
-                    :first-name="user.first_name"
-                    :last-name="user.last_name"
-                    :photo="user.photo_200"
-                    :screen-name="user.screen_name"
+                    class="user-list__user-card"
+                    :first-name="user.firstName"
+                    :last-name="user.lastName"
+                    :photo="user.avatar"
+                    :screen-name="user.screenName"
                 />
             </button>
         </li>
@@ -28,21 +36,24 @@ defineProps<{
     display: grid;
     overflow: auto;
     width: 100%;
-    max-height: 85vh;
+    max-height: 50vh;
     padding: 0;
-    background-color: #fff;
+    margin: 0;
     grid-template: auto / repeat(2, 1fr);
     list-style: none;
+
+    &__user-card {
+        transition: 0.3s background-color;
+    }
 
     &__button {
         width: 100%;
         padding: 0;
         border: none;
-        background-color: #fff;
         cursor: pointer;
         transition: 0.2s background-color;
 
-        &:hover {
+        &:hover .user-list__user-card {
             background-color: #b9eeff;
         }
     }
