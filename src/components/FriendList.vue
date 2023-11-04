@@ -30,6 +30,7 @@ defineProps<{
 <style scoped lang="scss">
 .friend-list {
     display: grid;
+    max-height: 80vh;
     justify-content: space-between;
     padding: 0;
     margin: 0;

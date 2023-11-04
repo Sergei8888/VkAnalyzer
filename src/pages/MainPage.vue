@@ -15,8 +15,20 @@ const userStore = useUserStore();
             @user-selected="(user) => userStore.addSelectedUser(user)"
         />
         <div class="user-lists-wrapper">
-            <UserList class="user-list" :users="userStore.selectedUsers" />
-            <FriendList class="user-list" :friends="userStore.friendList" />
+            <div class="user-lists-wrapper__list-block">
+                <h2>Исходный список пользователей</h2>
+                <UserList
+                    class="user-lists-wrapper__list"
+                    :users="userStore.selectedUsers"
+                />
+            </div>
+            <div class="user-lists-wrapper__list-block">
+                <h2>Список друзей</h2>
+                <FriendList
+                    class="user-lists-wrapper__list"
+                    :friends="userStore.friendList"
+                />
+            </div>
         </div>
         <SolveButton
             class="page__solve-button"
@@ -30,6 +42,16 @@ const userStore = useUserStore();
     display: flex;
     width: 100%;
     gap: 60px;
+
+    &__list-block {
+        width: 50%;
+    }
+
+    &__list {
+        overflow: auto;
+        width: 100%;
+        max-height: 80vh;
+    }
 }
 
 .page {
@@ -44,11 +66,9 @@ const userStore = useUserStore();
         var(--backgroundColor) 100%
     );
     gap: 20px;
-}
 
-.user-list {
-    overflow: auto;
-    width: 50%;
-    max-height: 80vh;
+    &__solve-button {
+        margin-top: auto;
+    }
 }
 </style>

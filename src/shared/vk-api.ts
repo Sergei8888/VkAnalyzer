@@ -16,6 +16,10 @@ export function useVkApi() {
             if (response.error.error_code === 6) {
                 return await apiCall<T>(cb);
             }
+            // Profile is private
+            if (response.error.error_code === 30) {
+                alert('Нельзая получить доступ к приватному профилю');
+            }
             throw response;
         }
         return response;
