@@ -4,7 +4,7 @@ export function useVkApi() {
     const defaultParams = {
         v: '5.154',
     };
-    const userFields = ['photo_200', 'screen_name', 'sex'];
+    const userFields = ['photo_200', 'screen_name', 'sex', 'bdate'];
 
     // Implements recursive retries when hitting vkapi Too many requests
     async function apiCall<T extends object>(

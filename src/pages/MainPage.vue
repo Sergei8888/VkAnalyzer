@@ -49,6 +49,6 @@ const userStore = useUserStore();
 .user-list {
     overflow: auto;
     width: 50%;
-    max-height: 100%;
+    max-height: 80vh;
 }
 </style>

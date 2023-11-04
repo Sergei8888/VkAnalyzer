@@ -25,7 +25,9 @@ export const useUserStore = defineStore('users', () => {
         );
 
         const foundUsers = (await Promise.all(friendRequests)).flat(1);
-        friendList.value = transformUsersToFriends(foundUsers);
+        friendList.value = transformUsersToFriends(foundUsers).sort((a, b) => {
+            return b.firstName + b.lastName > a.firstName + a.lastName ? -1 : 1;
+        });
     }
 
     /**

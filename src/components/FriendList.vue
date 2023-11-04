@@ -21,6 +21,7 @@ defineProps<{
                 :sex="friend.sex"
                 :count="friend.count"
                 :photo="friend.avatar"
+                :age="friend.age ?? 'Не указано'"
             />
         </li>
     </ul>

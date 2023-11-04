@@ -1,17 +1,41 @@
 <script setup lang="ts">
-defineProps<{
+import { computed } from 'vue';
+
+const props = defineProps<{
     firstName: string;
     lastName: string;
     id: number;
     photo: string;
     count: number;
     sex: string;
-    age?: number;
+    age: number | string;
 }>();
+
+const borderColorAlpha = computed(() => {
+    switch (props.count) {
+        case 0:
+            return 0;
+        case 1:
+            return 0.2;
+        case 2:
+            return 0.4;
+        case 3:
+            return 0.6;
+        case 4:
+            return 0.8;
+        default:
+            return 1;
+    }
+});
 </script>
 
 <template>
-    <div class="friend-card">
+    <div
+        class="friend-card"
+        :style="{
+            border: `4px solid rgba(30, 154, 255, ${borderColorAlpha}`,
+        }"
+    >
         <img
             class="friend-card__avatar"
             :src="photo"
