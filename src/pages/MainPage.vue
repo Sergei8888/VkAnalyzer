@@ -50,21 +50,14 @@ const userStore = useUserStore();
     &__list {
         overflow: auto;
         width: 100%;
-        max-height: 80vh;
+        max-height: 70vh;
     }
 }
 
 .page {
     display: flex;
-    height: 100vh;
     flex-direction: column;
     align-items: center;
-    padding: 60px 60px;
-    background-image: linear-gradient(
-        to bottom,
-        #ffffff 0%,
-        var(--backgroundColor) 100%
-    );
     gap: 20px;
 
     &__solve-button {

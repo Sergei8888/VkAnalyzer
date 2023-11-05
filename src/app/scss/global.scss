@@ -26,6 +26,16 @@ body {
     }
 }
 
+.page {
+    min-height: 100vh;
+    padding: 60px 60px;
+    background-image: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        var(--backgroundColor) 100%
+    );
+}
+
 .visually-hidden {
     position: absolute;
     overflow: hidden;

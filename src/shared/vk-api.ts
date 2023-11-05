@@ -1,4 +1,5 @@
 import { User, UserI } from '@/models/user.ts';
+import { WallPost, WallPostI } from '@/models/wall-post.ts';
 
 export function useVkApi() {
     const defaultParams = {
@@ -19,12 +20,14 @@ export function useVkApi() {
             // Profile is private
             if (response.error.error_code === 30) {
                 alert('Нельзая получить доступ к приватному профилю');
-                return response;
             }
+
             throw response;
         }
+
         return response;
     }
+
     async function searchUsers(query: string): Promise<UserI[]> {
         const response = await apiCall<UserI[]>(() => {
             return _searchUsers(query);
@@ -101,9 +104,47 @@ export function useVkApi() {
         });
     }
 
+    async function getWall(ownerId: number) {
+        const response = await apiCall<WallPostI[]>(() => {
+            return _getWall(ownerId);
+        });
+
+        if ('error' in response) {
+            throw new Error('Unexpected vk api error: ' + response.error);
+        }
+
+        return response;
+    }
+
+    function _getWall(ownerId: number): Promise<WallPostI[] | VkError> {
+        return new Promise((resolve) => {
+            VK.Api.call(
+                'wall.get',
+                {
+                    owner_id: ownerId,
+                    count: Number(import.meta.env.VITE_MAX_WALL_GET),
+                    ...defaultParams,
+                },
+                (response: VkSearchResponse<VkWallPost> | VkError) => {
+                    if ('error' in response) {
+                        resolve(response);
+                        return;
+                    }
+
+                    const wallPosts = response.response.items.map<WallPostI>(
+                        (wallPost) => new WallPost(wallPost)
+                    );
+
+                    resolve(wallPosts);
+                }
+            );
+        });
+    }
+
     return {
         searchUsers,
         getFriends,
+        getWall,
     };
 }
 
@@ -114,7 +155,7 @@ type VkSearchResponse<T> = {
     };
 };
 
-type VkError = {
+export type VkError = {
     error: {
         error_code: number;
         error_msg: string;
@@ -131,4 +172,55 @@ export type VkUser = {
     sex: 1 | 2 | 0;
     // Birth date in format DD.MM.YYYY or DD.MM
     bdate?: string;
+};
+
+export type VkWallPost = {
+    id: number;
+    // unixtime
+    date: number;
+    text: string;
+    comments: {
+        count: number;
+    };
+    likes: {
+        count: number;
+    };
+    reposts: {
+        count: number;
+    };
+    views: {
+        count: number;
+    };
+    attachments: VkAttachment[];
+};
+
+export type VkAttachment =
+    | VkPhotoAttachment
+    | VkAudioAttachment
+    | VkVideoAttachment;
+
+export type VkPhotoAttachment = {
+    type: 'photo';
+    photo: {
+        id: number;
+        // Full size photo
+        photo_604: string;
+    };
+};
+
+export type VkAudioAttachment = {
+    type: 'audio';
+    audio: {
+        id: number;
+        url: string;
+    };
+};
+
+export type VkVideoAttachment = {
+    type: 'video';
+    video: {
+        id: number;
+        // URL
+        player: string;
+    };
 };

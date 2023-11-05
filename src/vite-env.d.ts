@@ -5,6 +5,7 @@ interface ImportMetaEnv {
     readonly VITE_VK_APP_ID: string;
     readonly VITE_MAX_USER_SEARCH: string;
     readonly VITE_MAX_FRIENDS_GET: string;
+    readonly VITE_MAX_WALL_GET: string;
 }
 
 interface ImportMeta {

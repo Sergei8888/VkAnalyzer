@@ -36,6 +36,7 @@ onClickOutside(userSelectorElem, () => {
                 (user) => {
                     $emit('user-selected', user);
                     userSuggestion = [];
+                    isSelectorActive = false;
                 }
             "
         />
