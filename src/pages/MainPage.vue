@@ -20,6 +20,8 @@ const userStore = useUserStore();
                 <UserList
                     class="user-lists-wrapper__list"
                     :users="userStore.selectedUsers"
+                    removable
+                    @remove="(user) => userStore.removeSelectedUser(user.id)"
                 />
             </div>
             <div class="user-lists-wrapper__list-block">

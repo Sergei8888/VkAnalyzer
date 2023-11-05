@@ -25,8 +25,8 @@ const triggerSuggestion = throttle((e: Event) => {
             placeholder="Введие id, имя/фамилию или короткое имя пользователя"
             @focusin="
                 () => {
-                    triggerSuggestion;
                     emit('focused');
+                    triggerSuggestion;
                 }
             "
             @input="triggerSuggestion"

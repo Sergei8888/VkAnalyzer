@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import UserCard from '@/components/UserList/UserCard.vue';
-import { useUserStore } from '@/stores/user.store.ts';
 import { UserI } from '@/models/user.ts';
 
-defineProps<{
-    users: UserI[];
+withDefaults(
+    defineProps<{
+        users: UserI[];
+        // List will render user cards with cross buttons and emit removing event
+        removable?: boolean;
+    }>(),
+    {
+        removable: false,
+    }
+);
+
+defineEmits<{
+    (e: 'remove', user: UserI): void;
 }>();
 </script>
 
@@ -17,8 +27,8 @@ defineProps<{
                 :last-name="user.lastName"
                 :photo="user.avatar"
                 :screen-name="user.screenName"
-                removable
-                @remove="useUserStore().removeSelectedUser"
+                :removable="removable"
+                @remove="$emit('remove', user)"
             />
         </li>
     </ul>
@@ -27,7 +37,6 @@ defineProps<{
 <style scoped lang="scss">
 .user-list {
     display: grid;
-    max-height: 80vh;
     justify-content: space-between;
     padding: 0;
     margin: 0;

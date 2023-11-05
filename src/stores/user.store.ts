@@ -49,10 +49,17 @@ export const useUserStore = defineStore('users', () => {
         return Object.values(transformedObj);
     }
 
+    // Return users from selected users list that are friends to passed user id
+    async function getFriendSubsetFromSelectedUsers(userId: number) {
+        const allFriendsIds = await useVkApi().getFriendsIds(userId);
+        return selectedUsers.value.filter((u) => allFriendsIds.includes(u.id));
+    }
+
     return {
         addSelectedUser,
         removeSelectedUser,
         findFriendsOfSelectedUsers,
+        getFriendSubsetFromSelectedUsers,
         selectedUsers,
         friendList,
     };

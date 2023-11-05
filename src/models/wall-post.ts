@@ -8,7 +8,7 @@ import { VkWallPost } from '@/shared/vk-api.ts';
 
 export class WallPost implements WallPostI {
     id: number;
-    date: number;
+    date: string;
     text: string;
     comments: {
         count: number;
@@ -25,29 +25,32 @@ export class WallPost implements WallPostI {
     attachments: MediaAttachment[];
     constructor(wallPost: VkWallPost) {
         this.id = wallPost.id;
-        this.date = wallPost.date;
+        this.date = new Date(wallPost.date * 1000).toLocaleDateString('en-GB');
         this.text = wallPost.text;
-        this.comments = wallPost.comments;
-        this.likes = wallPost.likes;
-        this.reposts = wallPost.reposts;
-        this.views = wallPost.views;
-        this.attachments = wallPost.attachments.map((attach) => {
-            switch (attach.type) {
+        this.comments = wallPost.comments ?? { count: 0 };
+        this.likes = wallPost.likes ?? { count: 0 };
+        this.reposts = wallPost.reposts ?? { count: 0 };
+        this.views = wallPost.views ?? { count: 0 };
+        this.attachments = [];
+        for (const attachment of wallPost.attachments) {
+            switch (attachment.type) {
                 case 'photo':
-                    return new PhotoAttachment(attach);
+                    this.attachments.push(new PhotoAttachment(attachment));
+                    break;
                 case 'audio':
-                    return new AudioAttachment(attach);
+                    this.attachments.push(new AudioAttachment(attachment));
+                    break;
                 case 'video':
-                    return new VideoAttachment(attach);
+                    this.attachments.push(new VideoAttachment(attachment));
+                    break;
             }
-        });
+        }
     }
 }
 
 export interface WallPostI {
     id: number;
-    // unixtime
-    date: number;
+    date: string;
     text: string;
     comments: {
         count: number;

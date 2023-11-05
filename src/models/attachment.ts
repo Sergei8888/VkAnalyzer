@@ -13,13 +13,26 @@ export class PhotoAttachment implements PhotoAttachmentI {
     type = 'photo' as const;
     photo: {
         id: number;
-        fullSizeUrl: string;
+        url: string;
     };
 
     constructor(attach: VkPhotoAttachment) {
+        let photoUrl;
+        // Find one of the sizes: o, p, q, r
+        for (const size of attach.photo.sizes) {
+            if (['o', 'p', 'q', 'r'].includes(size.type)) {
+                photoUrl = size.url;
+            }
+        }
+
+        // If none of the sizes is found, use the first one
+        if (!photoUrl) {
+            photoUrl = attach.photo.sizes[0].url;
+        }
+
         this.photo = {
             id: attach.photo.id,
-            fullSizeUrl: attach.photo.photo_604,
+            url: photoUrl,
         };
     }
 }
@@ -28,7 +41,7 @@ export interface PhotoAttachmentI {
     type: 'photo';
     photo: {
         id: number;
-        fullSizeUrl: string;
+        url: string;
     };
 }
 

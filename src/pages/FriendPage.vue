@@ -5,43 +5,93 @@ import { ref } from 'vue';
 
 import { useVkApi, VkError } from '@/shared/vk-api.ts';
 import { WallPostI } from '@/models/wall-post.ts';
+import { useUserStore } from '@/stores/user.store.ts';
+import UserList from '@/components/UserList/UserList.vue';
+import VkWall from '@/components/VkWall/VkWall.vue';
+import { UserI } from '@/models/user.ts';
 
+// Validating friend id from query params
 const route = useRoute();
-const friendId = route.query.friendId;
+let friendId = route.query.friendId;
 if (!friendId || isNaN(Number(friendId))) {
     throw new Error(
         'You need to have friendId in query params convertable to number to render this page'
     );
 }
 
-const errorDuringInfoLoading = ref('');
-
-const wall = ref<WallPostI[]>();
+// Loading wall posts
+const errorDuringWallLoading = ref('');
+const wallPosts = ref<WallPostI[]>();
 useVkApi()
     .getWall(Number(friendId))
-    .then((wallPosts) => {
-        wall.value = wallPosts;
+    .then((wp) => {
+        wallPosts.value = wp;
     })
     .catch((err: VkError) => {
-        errorDuringInfoLoading.value = err.error.error_msg;
+        errorDuringWallLoading.value = err.error.error_msg;
     });
+
+// Loading friends from selected users list
+const userStore = useUserStore();
+const friendsFromSelectedUsers = ref<UserI[]>();
+userStore.getFriendSubsetFromSelectedUsers(Number(friendId)).then((friends) => {
+    friendsFromSelectedUsers.value = friends;
+});
 </script>
 
 <template>
     <div class="page">
-        {{ wall }}
-
-        <h1 v-if="errorDuringInfoLoading" class="error-heading">
-            Нет данных о пользователе: {{ errorDuringInfoLoading }}
+        <div v-if="!errorDuringWallLoading" class="content-wrapper">
+            <div class="content-wrapper__block">
+                <h2>Список друзей из списка исходный</h2>
+                <UserList
+                    v-if="friendsFromSelectedUsers?.length"
+                    class="page__user-list"
+                    :users="friendsFromSelectedUsers"
+                />
+                <h3 v-else>Исходный список пользователей не сформирован</h3>
+            </div>
+            <div class="content-wrapper__block">
+                <h2>Стена пользователя</h2>
+                <VkWall
+                    v-if="wallPosts"
+                    class="page__wall"
+                    :posts="wallPosts"
+                />
+            </div>
+        </div>
+        <h1 v-else class="error-heading">
+            Нет данных о пользователе: {{ errorDuringWallLoading }}
         </h1>
     </div>
 </template>
 
 <style scoped lang="scss">
+.page {
+    &__user-list {
+        grid-template-columns: 1fr;
+    }
+
+    &__user-list,
+    &__wall {
+        overflow: auto;
+        max-height: 80vh;
+    }
+}
+
 .error-heading {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.content-wrapper {
+    display: flex;
+    gap: 30px;
+
+    &__block {
+        width: 50%;
+    }
 }
 </style>

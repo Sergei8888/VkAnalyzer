@@ -78,12 +78,12 @@ export function useVkApi() {
         return response;
     }
 
-    function _getFriends(id: number): Promise<UserI[] | VkError> {
+    function _getFriends(userId: number): Promise<UserI[] | VkError> {
         return new Promise((resolve) => {
             VK.Api.call(
                 'friends.get',
                 {
-                    user_id: id,
+                    user_id: userId,
                     count: Number(import.meta.env.VITE_MAX_FRIENDS_GET),
                     fields: userFields,
                     ...defaultParams,
@@ -99,6 +99,39 @@ export function useVkApi() {
                     );
 
                     resolve(friends);
+                }
+            );
+        });
+    }
+
+    async function getFriendsIds(userId: number) {
+        const response = await apiCall<number[]>(() => {
+            return _getFriendsIds(userId);
+        });
+
+        if ('error' in response) {
+            throw new Error('Unexpected vk api error: ' + response.error);
+        }
+
+        return response;
+    }
+
+    function _getFriendsIds(userId: number): Promise<number[] | VkError> {
+        return new Promise((resolve) => {
+            VK.Api.call(
+                'friends.get',
+                {
+                    user_id: userId,
+                    count: 5000,
+                    ...defaultParams,
+                },
+                (response: VkGetIdsResponse | VkError) => {
+                    if ('error' in response) {
+                        resolve(response);
+                        return;
+                    }
+
+                    resolve(response.response.items.flat(1));
                 }
             );
         });
@@ -144,6 +177,7 @@ export function useVkApi() {
     return {
         searchUsers,
         getFriends,
+        getFriendsIds,
         getWall,
     };
 }
@@ -152,6 +186,13 @@ type VkSearchResponse<T> = {
     response: {
         count: number;
         items: T[];
+    };
+};
+
+type VkGetIdsResponse = {
+    response: {
+        count: number;
+        items: number[][];
     };
 };
 
@@ -179,16 +220,16 @@ export type VkWallPost = {
     // unixtime
     date: number;
     text: string;
-    comments: {
+    comments?: {
         count: number;
     };
-    likes: {
+    likes?: {
         count: number;
     };
-    reposts: {
+    reposts?: {
         count: number;
     };
-    views: {
+    views?: {
         count: number;
     };
     attachments: VkAttachment[];
@@ -203,8 +244,10 @@ export type VkPhotoAttachment = {
     type: 'photo';
     photo: {
         id: number;
-        // Full size photo
-        photo_604: string;
+        sizes: {
+            type: 's' | 'm' | 'x' | 'o' | 'p' | 'q' | 'r' | 'y' | 'z' | 'w';
+            url: string;
+        }[];
     };
 };
 
