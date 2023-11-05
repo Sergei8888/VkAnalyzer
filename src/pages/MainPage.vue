@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import UserSelector from '@/components/UserSelector.vue';
+import UserSelector from '@/components/UserSelector/UserSelector.vue';
 import { useUserStore } from '@/stores/user.store.ts';
-import UserList from '@/components/UserList.vue';
-import FriendList from '@/components/FriendList.vue';
+import UserList from '@/components/UserList/UserList.vue';
+import FriendList from '@/components/FriendList/FriendList.vue';
 import SolveButton from '@/components/SolveButton.vue';
 
 const userStore = useUserStore();
@@ -50,7 +50,7 @@ const userStore = useUserStore();
     &__list {
         overflow: auto;
         width: 100%;
-        max-height: 70vh;
+        max-height: 65vh;
     }
 }
 

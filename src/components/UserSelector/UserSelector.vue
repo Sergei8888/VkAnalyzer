@@ -3,8 +3,8 @@ import { ref } from 'vue';
 
 import { onClickOutside } from '@vueuse/core';
 
-import VkInput from '@/components/VkInput.vue';
-import UserSelectList from '@/components/UserSelectList.vue';
+import VkInput from '@/components/UserSelector/VkInput.vue';
+import UserSelectList from '@/components/UserSelector/UserSelectList.vue';
 import { UserI } from '@/models/user.ts';
 
 const userSuggestion = ref<UserI[]>([]);

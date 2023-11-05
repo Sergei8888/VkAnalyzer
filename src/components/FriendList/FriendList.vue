@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Friend } from '@/stores/user.store.ts';
-import FriendCard from '@/components/FriendCard.vue';
+import FriendCard from '@/components/FriendList/FriendCard.vue';
 
 defineProps<{
     friends: Friend[];

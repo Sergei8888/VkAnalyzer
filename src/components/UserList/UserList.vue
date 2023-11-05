@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserCard from '@/components/UserCard.vue';
+import UserCard from '@/components/UserList/UserCard.vue';
 import { useUserStore } from '@/stores/user.store.ts';
 import { UserI } from '@/models/user.ts';
 
