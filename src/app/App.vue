@@ -13,7 +13,7 @@ VK.Auth.getLoginStatus((response) => {
 function VkLogin() {
     VK.Auth.login((response) => {
         if (!response.session) {
-            throw Error('Auth error');
+            throw Error('Vk auth error');
         }
     }, 2);
 }

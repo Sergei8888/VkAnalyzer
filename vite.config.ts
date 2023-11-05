@@ -28,7 +28,7 @@ export default defineConfig(({ mode }): UserConfig => {
                     families: [
                         {
                             name: 'Montserrat',
-                            styles: 'wght@400;500;600',
+                            styles: 'wght@400;500',
                         },
                     ],
                 },
