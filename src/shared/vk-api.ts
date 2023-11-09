@@ -10,167 +10,128 @@ export function useVkApi() {
     // Implements recursive retries when hitting vkapi Too many requests
     async function apiCall<T extends object>(
         cb: () => Promise<T | VkError>
-    ): Promise<T | VkError> {
+    ): Promise<T> {
         const response = await cb();
         if ('error' in response) {
             // Too many requests
             if (response.error.error_code === 6) {
-                return await apiCall<T>(cb);
+                return await new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve(apiCall<T>(cb));
+                    }, 3000);
+                });
             }
-            // Profile is private
-            if (response.error.error_code === 30) {
-                alert('Нельзая получить доступ к приватному профилю');
-            }
 
-            throw response;
+            throw response.error;
         }
 
         return response;
     }
 
-    async function searchUsers(query: string): Promise<UserI[]> {
-        const response = await apiCall<UserI[]>(() => {
-            return _searchUsers(query);
-        });
+    function searchUsers(query: string): Promise<UserI[]> {
+        return apiCall(() => {
+            return new Promise((resolve) => {
+                VK.Api.call(
+                    'users.search',
+                    {
+                        q: query,
+                        count: Number(import.meta.env.VITE_MAX_USER_SEARCH),
+                        fields: userFields,
+                        ...defaultParams,
+                    },
+                    (response: VkSearchResponse<VkUser> | VkError) => {
+                        if ('error' in response) {
+                            resolve(response);
+                            return;
+                        }
 
-        if ('error' in response) {
-            throw new Error('Unexpected vk api error: ' + response.error);
-        }
+                        const users = response.response.items.map<UserI>(
+                            (vkUser) => new User(vkUser)
+                        );
 
-        return response;
-    }
-
-    function _searchUsers(query: string): Promise<UserI[] | VkError> {
-        return new Promise((resolve) => {
-            VK.Api.call(
-                'users.search',
-                {
-                    q: query,
-                    count: Number(import.meta.env.VITE_MAX_USER_SEARCH),
-                    fields: userFields,
-                    ...defaultParams,
-                },
-                (response: VkSearchResponse<VkUser> | VkError) => {
-                    if ('error' in response) {
-                        resolve(response);
-                        return;
+                        resolve(users);
                     }
-
-                    const users = response.response.items.map<UserI>(
-                        (vkUser) => new User(vkUser)
-                    );
-
-                    resolve(users);
-                }
-            );
+                );
+            });
         });
     }
 
-    async function getFriends(id: number): Promise<UserI[]> {
-        const response = await apiCall<UserI[]>(() => {
-            return _getFriends(id);
-        });
+    function getFriends(userId: number): Promise<UserI[]> {
+        return apiCall(() => {
+            return new Promise((resolve) => {
+                VK.Api.call(
+                    'friends.get',
+                    {
+                        user_id: userId,
+                        count: Number(import.meta.env.VITE_MAX_FRIENDS_GET),
+                        fields: userFields,
+                        ...defaultParams,
+                    },
+                    (response: VkSearchResponse<VkUser> | VkError) => {
+                        if ('error' in response) {
+                            resolve(response);
+                            return;
+                        }
 
-        if ('error' in response) {
-            throw new Error('Unexpected vk api error: ' + response.error);
-        }
+                        const friends = response.response.items.map<UserI>(
+                            (vkUser) => new User(vkUser)
+                        );
 
-        return response;
-    }
-
-    function _getFriends(userId: number): Promise<UserI[] | VkError> {
-        return new Promise((resolve) => {
-            VK.Api.call(
-                'friends.get',
-                {
-                    user_id: userId,
-                    count: Number(import.meta.env.VITE_MAX_FRIENDS_GET),
-                    fields: userFields,
-                    ...defaultParams,
-                },
-                (response: VkSearchResponse<VkUser> | VkError) => {
-                    if ('error' in response) {
-                        resolve(response);
-                        return;
+                        resolve(friends);
                     }
-
-                    const friends = response.response.items.map<UserI>(
-                        (vkUser) => new User(vkUser)
-                    );
-
-                    resolve(friends);
-                }
-            );
+                );
+            });
         });
     }
 
-    async function getFriendsIds(userId: number) {
-        const response = await apiCall<number[]>(() => {
-            return _getFriendsIds(userId);
-        });
+    function getFriendsIds(userId: number): Promise<number[]> {
+        return apiCall(() => {
+            return new Promise((resolve) => {
+                VK.Api.call(
+                    'friends.get',
+                    {
+                        user_id: userId,
+                        count: 5000,
+                        ...defaultParams,
+                    },
+                    (response: VkGetIdsResponse | VkError) => {
+                        if ('error' in response) {
+                            resolve(response);
+                            return;
+                        }
 
-        if ('error' in response) {
-            throw new Error('Unexpected vk api error: ' + response.error);
-        }
-
-        return response;
-    }
-
-    function _getFriendsIds(userId: number): Promise<number[] | VkError> {
-        return new Promise((resolve) => {
-            VK.Api.call(
-                'friends.get',
-                {
-                    user_id: userId,
-                    count: 5000,
-                    ...defaultParams,
-                },
-                (response: VkGetIdsResponse | VkError) => {
-                    if ('error' in response) {
-                        resolve(response);
-                        return;
+                        resolve(response.response.items.flat(1));
                     }
-
-                    resolve(response.response.items.flat(1));
-                }
-            );
+                );
+            });
         });
     }
 
-    async function getWall(ownerId: number) {
-        const response = await apiCall<WallPostI[]>(() => {
-            return _getWall(ownerId);
-        });
+    function getWall(ownerId: number): Promise<WallPostI[]> {
+        return apiCall(() => {
+            return new Promise((resolve) => {
+                VK.Api.call(
+                    'wall.get',
+                    {
+                        owner_id: ownerId,
+                        count: Number(import.meta.env.VITE_MAX_WALL_GET),
+                        ...defaultParams,
+                    },
+                    (response: VkSearchResponse<VkWallPost> | VkError) => {
+                        if ('error' in response) {
+                            resolve(response);
+                            return;
+                        }
 
-        if ('error' in response) {
-            throw new Error('Unexpected vk api error: ' + response.error);
-        }
+                        const wallPosts =
+                            response.response.items.map<WallPostI>(
+                                (wallPost) => new WallPost(wallPost)
+                            );
 
-        return response;
-    }
-
-    function _getWall(ownerId: number): Promise<WallPostI[] | VkError> {
-        return new Promise((resolve) => {
-            VK.Api.call(
-                'wall.get',
-                {
-                    owner_id: ownerId,
-                    count: Number(import.meta.env.VITE_MAX_WALL_GET),
-                    ...defaultParams,
-                },
-                (response: VkSearchResponse<VkWallPost> | VkError) => {
-                    if ('error' in response) {
-                        resolve(response);
-                        return;
+                        resolve(wallPosts);
                     }
-
-                    const wallPosts = response.response.items.map<WallPostI>(
-                        (wallPost) => new WallPost(wallPost)
-                    );
-
-                    resolve(wallPosts);
-                }
-            );
+                );
+            });
         });
     }
 

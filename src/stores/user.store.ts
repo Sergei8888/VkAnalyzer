@@ -63,6 +63,7 @@ export const useUserStore = defineStore('users', () => {
 
         return friendSubset
             .filter((item) => {
+                if (!item) return false;
                 return item.friends.find((user) => user.id === userId);
             })
             .map((item) => item.user);
