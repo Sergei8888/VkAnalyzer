@@ -41,7 +41,7 @@ userStore.getFriendSubsetFromSelectedUsers(Number(friendId)).then((friends) => {
 
 <template>
     <div class="page">
-        <div v-if="!errorDuringWallLoading" class="content-wrapper">
+        <div class="content-wrapper">
             <div class="content-wrapper__block">
                 <h2>Список друзей из списка исходный</h2>
                 <UserList
@@ -58,11 +58,11 @@ userStore.getFriendSubsetFromSelectedUsers(Number(friendId)).then((friends) => {
                     class="page__wall"
                     :posts="wallPosts"
                 />
+                <h3 v-else class="error-heading">
+                    Нет данных о пользователе: {{ errorDuringWallLoading }}
+                </h3>
             </div>
         </div>
-        <h1 v-else class="error-heading">
-            Нет данных о пользователе: {{ errorDuringWallLoading }}
-        </h1>
     </div>
 </template>
 
@@ -77,13 +77,6 @@ userStore.getFriendSubsetFromSelectedUsers(Number(friendId)).then((friends) => {
         overflow: auto;
         max-height: 80vh;
     }
-}
-
-.error-heading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 .content-wrapper {
