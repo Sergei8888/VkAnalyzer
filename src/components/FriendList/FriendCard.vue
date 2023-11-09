@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+
+import { useVkApi } from '@/shared/vk-api.ts';
 
 const props = defineProps<{
     firstName: string;
@@ -27,6 +29,13 @@ const borderColorAlpha = computed(() => {
             return 1;
     }
 });
+
+const friendCount = ref<number | null>(null);
+useVkApi()
+    .getFriendsIds(props.id)
+    .then((ids) => {
+        friendCount.value = ids.length;
+    });
 </script>
 
 <template>
@@ -50,6 +59,9 @@ const borderColorAlpha = computed(() => {
             </span>
             <span class="friend-card__sex">Пол: {{ sex }}</span>
             <span class="friend-card__age">Возраст: {{ age }}</span>
+            <span class="friend-card__friends-count">
+                Количество друзей: {{ friendCount || '...' }}
+            </span>
         </div>
     </div>
 </template>
@@ -76,7 +88,8 @@ const borderColorAlpha = computed(() => {
     }
 
     &__sex,
-    &__age {
+    &__age,
+    &__friends-count {
         color: #565656;
     }
 }

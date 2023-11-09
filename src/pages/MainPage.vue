@@ -4,8 +4,15 @@ import { useUserStore } from '@/stores/user.store.ts';
 import UserList from '@/components/UserList/UserList.vue';
 import FriendList from '@/components/FriendList/FriendList.vue';
 import SolveButton from '@/components/SolveButton.vue';
+import { VkError } from '@/shared/vk-api.ts';
 
 const userStore = useUserStore();
+
+function handleFindFriends() {
+    userStore.findFriendsOfSelectedUsers().catch((err: VkError['error']) => {
+        alert('Произошла ошибка при поиске друзей: ' + err.error_msg);
+    });
+}
 </script>
 
 <template>
@@ -32,10 +39,7 @@ const userStore = useUserStore();
                 />
             </div>
         </div>
-        <SolveButton
-            class="page__solve-button"
-            @click="userStore.findFriendsOfSelectedUsers()"
-        />
+        <SolveButton class="page__solve-button" @click="handleFindFriends" />
     </div>
 </template>
 
