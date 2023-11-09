@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+
+import { useElementVisibility } from '@vueuse/core';
 
 import { useVkApi } from '@/shared/vk-api.ts';
 
@@ -30,16 +32,29 @@ const borderColorAlpha = computed(() => {
     }
 });
 
-const friendCount = ref<number | null>(null);
-useVkApi()
-    .getFriendsIds(props.id)
-    .then((ids) => {
-        friendCount.value = ids.length;
-    });
+const cardElem = ref<HTMLElement>();
+const cardVisibility = useElementVisibility(cardElem);
+
+// Fetch friend count only when card is visible, to not trigger unnecessary api requests
+watch(cardVisibility, () => {
+    if (cardVisibility.value && friendCount.value === null) {
+        useVkApi()
+            .getFriendsIds(props.id)
+            .then((ids) => {
+                friendCount.value = ids.length;
+            })
+            .catch(() => {
+                friendCount.value = 'невозможно установить';
+            });
+    }
+});
+
+const friendCount = ref<number | null | string>(null);
 </script>
 
 <template>
     <div
+        ref="cardElem"
         class="friend-card"
         :style="{
             border: `4px solid rgba(30, 154, 255, ${borderColorAlpha}`,
