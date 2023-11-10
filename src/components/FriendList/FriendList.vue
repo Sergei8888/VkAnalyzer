@@ -27,6 +27,7 @@ defineProps<{
                     :count="friend.count"
                     :photo="friend.avatar"
                     :age="friend.age ?? 'Не указано'"
+                    :friend-count="friend.friendCount"
                 />
             </router-link>
         </li>

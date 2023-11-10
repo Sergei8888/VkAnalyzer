@@ -82,4 +82,5 @@ export const useUserStore = defineStore('users', () => {
 export interface Friend extends UserI {
     // How many times this friend was found for selected users
     count: number;
+    friendCount?: number;
 }

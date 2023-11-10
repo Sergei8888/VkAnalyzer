@@ -4,6 +4,7 @@ import { computed, ref, watch } from 'vue';
 import { useElementVisibility } from '@vueuse/core';
 
 import { useVkApi } from '@/shared/vk-api.ts';
+import { Friend, useUserStore } from '@/stores/user.store.ts';
 
 const props = defineProps<{
     firstName: string;
@@ -13,6 +14,7 @@ const props = defineProps<{
     count: number;
     sex: string;
     age: number | string;
+    friendCount?: number;
 }>();
 
 const borderColorAlpha = computed(() => {
@@ -35,21 +37,23 @@ const borderColorAlpha = computed(() => {
 const cardElem = ref<HTMLElement>();
 const cardVisibility = useElementVisibility(cardElem);
 
+const friendCountError = ref('');
 // Fetch friend count only when card is visible, to not trigger unnecessary api requests
 watch(cardVisibility, () => {
-    if (cardVisibility.value && friendCount.value === null) {
+    if (cardVisibility.value && !props.friendCount && !friendCountError.value) {
         useVkApi()
             .getFriendsIds(props.id)
             .then((ids) => {
-                friendCount.value = ids.length;
+                const friend = useUserStore().friendList.find(
+                    (u) => u.id === props.id
+                ) as Friend;
+                friend.friendCount = ids.length;
             })
             .catch(() => {
-                friendCount.value = 'невозможно установить';
+                friendCountError.value = 'невозможно установить';
             });
     }
 });
-
-const friendCount = ref<number | null | string>(null);
 </script>
 
 <template>
@@ -75,7 +79,8 @@ const friendCount = ref<number | null | string>(null);
             <span class="friend-card__sex">Пол: {{ sex }}</span>
             <span class="friend-card__age">Возраст: {{ age }}</span>
             <span class="friend-card__friends-count">
-                Количество друзей: {{ friendCount || '...' }}
+                Количество друзей:
+                {{ friendCountError || friendCount || '...' }}
             </span>
         </div>
     </div>
